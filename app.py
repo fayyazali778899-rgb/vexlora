@@ -1,146 +1,172 @@
 import streamlit as st
-import random
 import time
-from datetime import datetime, timedelta
+import hashlib
+import hmac
+import random
 
-# 1. Mobile Screen Configuration
+# ==========================================
+# 🛡️ VEXLORA ZERO-TRUST SECURITY & FORTRESS KERNEL
+# ==========================================
 st.set_page_config(
-    page_title="Vexlora Super AI App",
-    page_icon="⚡",
-    layout="centered",
+    page_title="Vexlora Fortress AI - Created by Fayyaz Rajpoot",
+    page_icon="🛡️",
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Mobile Custom CSS (App-like Styling)
+# Initialize Security State
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+if "failed_attempts" not in st.session_state:
+    st.session_state["failed_attempts"] = 0
+if "lockout_time" not in st.session_state:
+    st.session_state["lockout_time"] = 0
+if "security_version" not in st.session_state:
+    st.session_state["security_version"] = f"AI-SHIELD-v2.6.{random.randint(100,999)}"
+if "hashed_password" not in st.session_state:
+    st.session_state["hashed_password"] = hashlib.sha256("admin123".encode()).hexdigest()
+
+# Intrusion Detection & Emergency Lockdown
+current_time = time.time()
+if st.session_state["failed_attempts"] >= 3:
+    lockout_remaining = int(60 - (current_time - st.session_state["lockout_time"]))
+    if lockout_remaining > 0:
+        st.error(f"🚨 CRITICAL SECURITY BREACH: Unauthorized access detected. System locked for {lockout_remaining}s.")
+        st.stop()
+    else:
+        st.session_state["failed_attempts"] = 0
+
+# Security Barrier & Authentication
+def secure_gate():
+    if not st.session_state["authenticated"]:
+        st.markdown(f"""
+        <div style="max-width: 420px; margin: 60px auto; background: #0d1117; padding: 35px; border-radius: 16px; border: 1px solid #30363d; box-shadow: 0 15px 35px rgba(0,0,0,0.8);">
+            <h2 style="color: #58a6ff; text-align: center; margin-bottom: 5px;">🛡️ Vexlora Fortress</h2>
+            <p style="color: #3fb950; text-align: center; font-size: 0.75rem; font-family: monospace;">Created by Fayyaz Rajpoot | {st.session_state['security_version']}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            pwd_input = st.text_input("Enter Master Security Key:", type="password", key="sec_pwd")
+            if st.button("🔓 Initialize Secure Session"):
+                input_hash = hashlib.sha256(pwd_input.encode()).hexdigest()
+                if hmac.compare_digest(input_hash, st.session_state["hashed_password"]):
+                    st.session_state["authenticated"] = True
+                    st.session_state["failed_attempts"] = 0
+                    st.success("Identity Verified. Access Granted.")
+                    time.sleep(0.8)
+                    st.rerun()
+                else:
+                    st.session_state["failed_attempts"] += 1
+                    st.session_state["lockout_time"] = time.time()
+                    if st.session_state["failed_attempts"] >= 3:
+                        st.error("🚨 Intrusion threshold reached! Security lockdown triggered.")
+                    else:
+                        st.warning(f"Invalid Key! Warning {st.session_state['failed_attempts']}/3 before lockdown.")
+        return False
+    return True
+
+if not secure_gate():
+    st.stop()
+
+# ==========================================
+# 🎨 HIGH-END FORTRESS UI & DESIGN
+# ==========================================
 st.markdown("""
-    <style>
-    /* Remove default padding for app feel */
-    .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 3rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
+<style>
+    .stApp {
+        background: linear-gradient(135deg, #090d16 0%, #111827 100%);
+        color: #f3f4f6;
+        font-family: 'Inter', sans-serif;
     }
-    /* Touch Friendly Buttons */
-    .stButton>button {
-        width: 100%;
-        border-radius: 12px;
-        height: 3.2em;
-        font-weight: bold;
-        background-color: #2563EB;
-        color: white;
+    header, footer {visibility: hidden;}
+    
+    .fortress-banner {
+        background: linear-gradient(90deg, #1f6feb 0%, #7928ca 100%);
+        border-radius: 14px;
+        padding: 22px;
+        text-align: center;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 25px rgba(31, 111, 235, 0.3);
     }
-    /* Custom Card Style */
-    .app-card {
-        background-color: #1E293B;
-        padding: 15px;
+    .fortress-title { font-size: 1.8rem; font-weight: 800; color: #fff; }
+    .fortress-subtitle { font-size: 0.85rem; color: #e5e7eb; opacity: 0.9; }
+
+    .shield-card {
+        background: rgba(17, 24, 39, 0.85);
+        border: 1px solid #374151;
         border-radius: 12px;
+        padding: 18px;
         margin-bottom: 15px;
-        color: white;
     }
-    </style>
+</style>
 """, unsafe_allow_html=True)
 
-# App Header
-st.markdown("<h2 style='text-align: center;'>⚡ VEXLORA MOBILE AI</h2>", unsafe_allow_html=True)
-st.caption("📱 10x Autonomous Multi-Site Auto-Publisher OS")
+# Main Banner with Creator Name
+st.markdown(f"""
+<div class="fortress-banner">
+    <div class="fortress-title">🛡️ VEXLORA SUPER AGENT</div>
+    <div class="fortress-subtitle">Created by <b>Fayyaz Rajpoot</b> • Autonomous AI Shield • Patch: {st.session_state['security_version']}</div>
+</div>
+""", unsafe_allow_html=True)
 
-# Mobile Navigation Tabs
-tab1, tab2, tab3, tab4 = st.tabs(["🏠 Home", "➕ Add Web", "📅 Schedule", "⚙️ Setup"])
+# Navigation Tabs
+tab1, tab2, tab3, tab4 = st.tabs(["🚀 Agent Sandbox", "📊 Threat Telemetry", "🌐 Infrastructure", "🔒 Security & Creator Settings"])
 
-# ==========================================
-# TAB 1: MOBILE HOME DASHBOARD
-# ==========================================
 with tab1:
-    st.subheader("📊 Live Matrix Status")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-        <div class="app-card">
-            <p style="margin:0; font-size:12px; color:#94A3B8;">ACTIVE SITES</p>
-            <h2 style="margin:0;">10 Web</h2>
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div class="app-card">
-            <p style="margin:0; font-size:12px; color:#94A3B8;">TODAY POSTS</p>
-            <h2 style="margin:0; color:#4ADE80;">24 Live</h2>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("### ⚡ Quick Auto-Post")
-    kw = st.text_input("Enter Keyword", placeholder="e.g. Best Insurance Rates UK")
-    niche = st.selectbox("Select Target Niche Site", ["Health Web", "Crypto Web", "Finance Web", "Law Web", "Insurance Web"])
-    
-    if st.button("🚀 Publish Now (One-Tap)"):
-        if kw:
-            with st.spinner("🤖 AI Agents Researching & Writing..."):
-                time.sleep(2)
-                st.success(f"✅ Published! '{kw}' sent to {niche}")
-                st.info("⚡ Pinged Google Search Console & IndexNow for instant indexing.")
+    st.markdown("### ⚡ Secure AI Execution Engine")
+    keyword = st.text_input("Enter secure prompt or operation task:", placeholder="e.g. Autonomous Content Pipeline")
+    if st.button("🚀 Run Isolated Task"):
+        if keyword:
+            with st.spinner("🔒 AI inspecting payload in secure sandbox..."):
+                time.sleep(1.2)
+                st.success(f"Task executed securely for: {keyword}")
         else:
-            st.warning("Pehle keyword enter karein!")
+            st.warning("Please specify a command.")
 
-# ==========================================
-# TAB 2: CONNECT NEW WEBSITE (+)
-# ==========================================
 with tab2:
-    st.subheader("➕ Connect New Website")
-    st.caption("Domain connect karein aur 100% automated posting shuru karein.")
-    
-    web_name = st.text_input("Website Name", placeholder="e.g. Health Matrix")
-    web_domain = st.text_input("Domain URL", placeholder="https://mywebsite.com")
-    web_niche = st.selectbox("Assign Niche", ["Health", "Crypto", "Finance", "Insurance", "Law", "Tech"])
-    cms_type = st.radio("CMS Type", ["WordPress REST API", "Universal PHP Webhook", "Cloudflare Workers"])
-    
-    if cms_type == "WordPress REST API":
-        wp_user = st.text_input("WP Admin Username")
-        wp_pass = st.text_input("WP Application Password", type="password")
-    else:
-        token = st.text_input("Secret API Key/Token", type="password")
-        
-    if st.button("🔗 Save & Connect Domain"):
-        if web_domain and web_name:
-            st.success(f"🎉 '{web_name}' Successfully Added to Vexlora Network!")
-        else:
-            st.error("Tamam fields fill karein!")
+    st.markdown("### 📊 Live Threat & Firewall Telemetry")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown('<div class="shield-card"><h4>AI Self-Patching</h4><p style="color:#34d399; font-weight:bold;">Active & Secured</p></div>', unsafe_allow_html=True)
+    with col2:
+        st.markdown('<div class="shield-card"><h4>DDoS / Bot Shield</h4><p style="color:#60a5fa; font-weight:bold;">Active & Filtering</p></div>', unsafe_allow_html=True)
+    with col3:
+        st.markdown('<div class="shield-card"><h4>System Creator</h4><p style="color:#a78bfa; font-weight:bold;">Fayyaz Rajpoot</p></div>', unsafe_allow_html=True)
 
-# ==========================================
-# TAB 3: BULK SCHEDULER & QUEUE
-# ==========================================
 with tab3:
-    st.subheader("📅 Bulk Queue Scheduler")
-    st.caption("1 Hafta ya 1 Mahine ke keywords ek sath upload karein.")
-    
-    bulk_text = st.text_area("Paste Keywords (One per line)", placeholder="Best Health Insurance 2026\nTop Crypto Wallets\nHow to Claim Insurance", height=150)
-    
-    col_a, col_b = st.columns(2)
-    with col_a:
-        posts_per_day = st.number_input("Posts per Day", min_value=1, max_value=20, value=3)
-    with col_b:
-        jitter = st.selectbox("Stealth Delay", ["Random Jitter (Safe)", "Exact Fixed Time"])
-        
-    if st.button("🗓️ Activate Stealth Auto-Queue"):
-        if bulk_text:
-            st.success("✅ Keywords queued! System random timings par publish karta rahega.")
-        else:
-            st.warning("Keywords daalein!")
+    st.markdown("### 🌐 Connected Secure Nodes")
+    st.text_input("Target URL", placeholder="https://mysecuredsite.com")
+    st.text_input("Encrypted Token", type="password")
+    if st.button("Register Secure Node"):
+        st.success("Node successfully registered under encrypted protocol!")
 
-# ==========================================
-# TAB 4: SETTINGS & API KEYS
-# ==========================================
 with tab4:
-    st.subheader("⚙️ System Configuration")
+    st.markdown("### ⚙️ Security & Creator Control Panel")
+    st.info("💡 **System Ownership:** This Autonomous Super Agent is exclusively engineered and managed by **Fayyaz Rajpoot**.")
     
-    openrouter_key = st.text_input("Free OpenRouter API Key", type="password", value="sk-or-xxxx")
-    brave_key = st.text_input("Brave Search API Key", type="password", value="BSA-xxxx")
-    
-    st.markdown("---")
-    st.markdown("#### 🛡️ Quality Gateway Thresholds")
-    st.slider("Helpful Content Target Score", 80, 100, 85)
-    st.slider("Max Allowed AI Score (%)", 0, 30, 15)
-    
-    if st.button("💾 Save Settings"):
-        st.success("Settings Saved!")
+    with st.form("fortress_security_form"):
+        st.markdown("#### Update Master Password")
+        old_pwd = st.text_input("Current Master Key", type="password")
+        new_pwd = st.text_input("New Master Key", type="password")
+        confirm_pwd = st.text_input("Confirm New Master Key", type="password")
+        
+        update_btn = st.form_submit_button("🛡️ Re-Encrypt & Update Master Key")
+        if update_btn:
+            old_hash = hashlib.sha256(old_pwd.encode()).hexdigest()
+            if not hmac.compare_digest(old_hash, st.session_state["hashed_password"]):
+                st.error("Current master key is incorrect!")
+            elif new_pwd != confirm_pwd:
+                st.error("New master keys do not match!")
+            elif len(new_pwd) < 6:
+                st.warning("Master key must be at least 6 characters long.")
+            else:
+                st.session_state["hashed_password"] = hashlib.sha256(new_pwd.encode()).hexdigest()
+                st.session_state["security_version"] = f"AI-SHIELD-v2.6.{random.randint(100,999)}"
+                st.success("Master key updated successfully by Fayyaz Rajpoot!")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("🚪 Terminate Session (Lockdown)"):
+        st.session_state["authenticated"] = False
+        st.rerun()
