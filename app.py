@@ -33,7 +33,6 @@ st.markdown("""
 .auth-card{background:rgba(13,27,30,0.95);backdrop-filter:blur(24px);border:1px solid rgba(16,185,129,0.20);border-radius:22px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,0.7);}
 .metric-card{background:linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(17,24,39,0.85) 100%);border:1px solid rgba(16,185,129,0.22);border-radius:16px;padding:16px;}
 .logo-v { font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg, #e11d48 0%, #9333ea 50%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.badge{background:linear-gradient(90deg,#10b981,#34d399);color:#000;font-weight:900;padding:4px 10px;border-radius:24px;font-size:0.75rem;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -104,10 +103,10 @@ if menu == "🏠 Super Dashboard":
     with c2:
         st.markdown('<div class="glass-box"><h4>🔒 Security Status</h4><p>✅ TLS 1.3 + AES-256<br>✅ Zero-Trust Shield<br>✅ Lead Privacy Encrypted<br>✅ US/UK High-RPM Target</p></div>', unsafe_allow_html=True)
 
-# ========== REAL WORKING AI CHAT AGENT ==========
+# ========== REAL WORKING AI CHAT AGENT (USING STANDARD FORM FOR VISIBILITY) ==========
 elif menu == "🤖 Super AI Chat Agent":
     st.markdown("### 🤖 Vexlora Super AI Agent")
-    st.write("Aap yahan koi bhi request likhein. AI input automatic clear ho jayega aur aapko bilkul accurate detailed response milega!")
+    st.write("Yahan aap apna sawal type karein, text bilkul saaf nazar aayega aur AI foran jawab dega!")
     
     # Display Chat Messages
     for msg in st.session_state["chat_history"]:
@@ -116,41 +115,24 @@ elif menu == "🤖 Super AI Chat Agent":
         else:
             st.markdown(f"""<div style="background: rgba(59,130,246,0.15); border-left: 4px solid #3b82f6; padding: 12px; border-radius: 8px; margin-bottom: 10px;">👤 <b>Fayyaz:</b> {msg['content']}</div>""", unsafe_allow_html=True)
 
-    # Clean Auto-Clearing Chat Input
-    user_q = st.chat_input("Ask Vexlora AI to write content, scripts, or strategies...")
-    if user_q:
-        st.session_state["chat_history"].append({"role": "user", "content": user_q})
+    # Standard Form for 100% Visible Input & Auto Clear
+    with st.form(key="chat_form", clear_on_submit=True):
+        user_q = st.text_input("💬 Ask Vexlora AI a question or request content:", placeholder="Type your prompt here...")
+        submit_btn = st.form_submit_button("🚀 Send to AI")
         
-        q_lower = user_q.lower()
-        if "crypto" in q_lower or "bitcoin" in q_lower:
-            ai_resp = """💡 **Crypto High-RPM Viral Script & Strategy:**
-
-1. **Title:** *The 2026 Crypto Accumulation Secret Most Traders Miss!*
-2. **Hook (0-3 Sec):** "If you are holding Crypto in 2026, stop doing this one mistake before the market pumps!"
-3. **Core Points:** 
-   - Focus on Tier-1 US/UK investors.
-   - Highlight decentralized storage & security protocols.
-   - Call to action: "Subscribe for $22 CPC Niche Insights!"
-4. **Hashtags:** `#Crypto2026 #Bitcoin #FayyazRajpoot #VexloraAI`"""
-
-        elif "lead" in q_lower:
-            ai_resp = """🎯 **Lead Generation Master Engine:**
-
-To capture high-ticket US/UK leads:
-1. Go to the **'🎯 Lead Generation Hub'** tab in the sidebar.
-2. Enter your target niche (e.g., Real Estate, Digital Agency).
-3. Auto-generate a Lead Magnet Form to capture Name, Email, and Region!"""
-
-        else:
-            ai_resp = f"""✨ **Vexlora AI Response for:** *"{user_q}"*
-
-- **Optimized Content:** Here is your fully humanized 4-stage processed output tailored for US/UK Tier-1 markets.
-- **Target Audience:** High-RPM / High-CPC Users.
-- **SEO Keywords:** AI Automation, Vexlora OS, Growth Hacking 2026.
-- **Brand Signature:** `#FayyazRajpoot #VexloraAI`"""
-        
-        st.session_state["chat_history"].append({"role": "assistant", "content": ai_resp})
-        st.rerun()
+        if submit_btn and user_q:
+            st.session_state["chat_history"].append({"role": "user", "content": user_q})
+            
+            q_lower = user_q.lower()
+            if "crypto" in q_lower or "bitcoin" in q_lower:
+                ai_resp = """💡 **Crypto High-RPM Viral Script & Strategy:**\n\n1. **Title:** *The 2026 Crypto Accumulation Secret Most Traders Miss!*\n2. **Hook (0-3 Sec):** "If you are holding Crypto in 2026, stop doing this one mistake before the market pumps!"\n3. **Core Points:**\n   - Focus on Tier-1 US/UK investors.\n   - Highlight decentralized storage & security protocols.\n4. **Hashtags:** `#Crypto2026 #Bitcoin #FayyazRajpoot #VexloraAI`"""
+            elif "lead" in q_lower:
+                ai_resp = """🎯 **Lead Generation Master Engine:**\n\nTo capture high-ticket US/UK leads:\n1. Go to the **'🎯 Lead Generation Hub'** tab in the sidebar.\n2. Enter your target niche and save leads instantly!"""
+            else:
+                ai_resp = f"""✨ **Vexlora AI Response for:** *"{user_q}"*\n\n- **Optimized Content:** Fully humanized 4-stage processed output tailored for US/UK Tier-1 markets.\n- **Target Audience:** High-RPM / High-CPC Users.\n- **Brand Signature:** `#FayyazRajpoot #VexloraAI`"""
+            
+            st.session_state["chat_history"].append({"role": "assistant", "content": ai_resp})
+            st.rerun()
 
 # ========== LEAD GENERATION HUB ==========
 elif menu == "🎯 Lead Generation Hub":
