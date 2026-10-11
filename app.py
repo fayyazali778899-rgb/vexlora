@@ -1,5 +1,4 @@
 import streamlit as st, hashlib, hmac, time, random, pandas as pd
-import plotly.express as px
 from datetime import datetime
 
 st.set_page_config(
@@ -74,7 +73,7 @@ with st.sidebar:
         ["🏠 Super Dashboard", "🤖 Super AI Chat Assistant", "🎯 Lead Generation Hub", "🚀 Auto Command Publisher", "⚙️ Settings & Logout"]
     )
 
-# ========== DASHBOARD WITH HD GRAPH ==========
+# ========== DASHBOARD WITH STREAMLIT BUILT-IN GRAPH ==========
 if menu == "🏠 Super Dashboard":
     st.markdown("### 🏠 Super Dashboard - Vexlora 2.8M Reach & Lead Engine")
     m1, m2, m3, m4 = st.columns(4)
@@ -88,25 +87,15 @@ if menu == "🏠 Super Dashboard":
     with c1:
         st.markdown('<div class="glass-box"><h4>📈 Lead Capture & Revenue Growth Graph ($28 High-RPM)</h4>', unsafe_allow_html=True)
         
-        # High Definition Plotly Interactive Graph
-        graph_data = pd.DataFrame({
-            "Month": ["May", "Jun", "Jul", "Aug", "Oct", "Now"],
-            "Captured Leads": [120, 310, 620, 890, 1240, 1420],
-            "Earnings ($)": [1200, 3100, 6200, 8900, 12400, 15800]
-        })
-        
-        fig = px.line(graph_data, x="Month", y=["Captured Leads", "Earnings ($)"], 
-                      markers=True, 
-                      color_discrete_sequence=["#10b981", "#38bdf8"])
-        
-        fig.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0",
-            margin=dict(l=10, r=10, t=10, b=10),
-            legend=dict(title=None, orientation="h", y=1.1)
+        # Built-in Streamlit Line Chart (No extra module required)
+        chart_df = pd.DataFrame(
+            {
+                "Captured Leads": [120, 310, 620, 890, 1240, 1420],
+                "Earnings ($)": [1200, 3100, 6200, 8900, 12400, 15800]
+            },
+            index=["May", "Jun", "Jul", "Aug", "Oct", "Now"]
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.line_chart(chart_df, color=["#10b981", "#38bdf8"])
         st.markdown('</div>', unsafe_allow_html=True)
         
     with c2:
